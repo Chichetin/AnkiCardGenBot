@@ -1,42 +1,6 @@
-# Python cache and bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Environment and local secrets
 .env
-.env.*
-!.env.example
-
-# Build / packaging artifacts
-build/
-dist/
-*.egg-info/
-.eggs/
-
-# Test / coverage artifacts
+.venv/
+__pycache__/
+*.pyc
 .pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-
-# Type checker / linter caches
-.mypy_cache/
-.ruff_cache/
-
-# Logs and local runtime files
-*.log
-*.pid
-
-# JetBrains IDE
 .idea/
-*.iml
-
-# OS files
-.DS_Store
-Thumbs.db
