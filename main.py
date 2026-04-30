@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from gigachat import GigaChat
@@ -8,6 +9,12 @@ from config import settings
 from services.anki import AnkiService
 from services.gigachat import GigaChatService
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
+
 
 async def main():
     bot = Bot(token=settings.telegram_token)
@@ -15,13 +22,17 @@ async def main():
 
     gigachat_client = GigaChat(credentials=settings.gigachat_credentials, verify_ssl_certs=False)
     gigachat_service = GigaChatService(client=gigachat_client)
-    anki_service = AnkiService(base_url=settings.anki_url)
+    anki_service = AnkiService(base_url=settings.anki_url, model=settings.anki_model)
 
     dp.include_router(router)
     dp["gigachat"] = gigachat_service
     dp["anki"] = anki_service
 
-    await dp.start_polling(bot)
+    logger.info("Bot started. Listening for messages...")
+    try:
+        await dp.start_polling(bot)
+    finally:
+        logger.info("Bot stopped.")
 
 
 if __name__ == "__main__":

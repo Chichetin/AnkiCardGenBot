@@ -6,8 +6,9 @@ class AnkiError(Exception):
 
 
 class AnkiService:
-    def __init__(self, base_url: str = "http://localhost:8765"):
+    def __init__(self, base_url: str = "http://localhost:8765", model: str = "Basic"):
         self._base_url = base_url
+        self._model = model
 
     async def _invoke(self, action: str, **params) -> object:
         payload = {"action": action, "version": 6, "params": params}
@@ -31,7 +32,7 @@ class AnkiService:
             "addNote",
             note={
                 "deckName": deck,
-                "modelName": "Basic",
+                "modelName": self._model,
                 "fields": {"Front": front, "Back": back},
                 "options": {"allowDuplicate": False},
             },

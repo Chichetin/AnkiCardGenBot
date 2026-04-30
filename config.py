@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     telegram_token: str
     gigachat_credentials: str
     anki_url: str = "http://localhost:8765"
+    anki_model: str = "Basic"
 
     model_config = {"env_file": ".env"}
 
