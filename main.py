@@ -8,6 +8,7 @@ from bot.handlers.card_flow import router
 from config import settings
 from services.anki import AnkiService
 from services.gigachat import GigaChatService
+from services.word_queue import WordQueue
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,6 +28,7 @@ async def main():
     dp.include_router(router)
     dp["gigachat"] = gigachat_service
     dp["anki"] = anki_service
+    dp["queue"] = WordQueue()
 
     logger.info("Bot started. Listening for messages...")
     try:
