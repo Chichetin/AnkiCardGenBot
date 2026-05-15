@@ -6,9 +6,10 @@ A Telegram bot that turns words and phrases into Anki cards. You message a word,
 
 1. You send a word or phrase to the bot in Telegram.
 2. The bot asks GigaChat for a Russian translation and an example sentence in both the source language and Russian.
-3. The bot shows a card preview with **Approve** / **Discard** buttons.
-4. On approve, the bot fetches the list of decks from your running Anki instance and shows a deck picker.
-5. After you pick a deck, the bot adds the note to Anki using AnkiConnect.
+3. The bot shows a card preview with **Approve** / **Edit** / **Discard** buttons.
+4. Optionally tap **Edit** to tweak the generated text before saving (see below).
+5. On approve, the bot fetches the list of decks from your running Anki instance and shows a deck picker.
+6. After you pick a deck, the bot adds the note to Anki using AnkiConnect.
 
 While a card is waiting for review or deck choice, any extra words you send are pushed onto an in-memory queue. As soon as the current card is resolved (approved, discarded, or fails), the queue is drained automatically.
 
@@ -67,8 +68,9 @@ While a card is waiting for review or deck choice, any extra words you send are 
 In Telegram:
 
 - Send any word or phrase as a plain message — the bot replies with a generated card preview.
-- Tap **Approve** to pick a deck and save, or **Discard** to drop the card.
-- Send more words while reviewing — they go into a queue and will be processed one by one after the current card is resolved.
+- Tap **Approve** to pick a deck and save, **Edit** to revise the card text, or **Discard** to drop the card.
+- When editing, the bot echoes the current card as plain text — reply with the corrected version where the **first line is the front** and **the rest is the back**. The preview is then shown again with the same buttons.
+- Send more words while reviewing — they go into a queue and will be processed one by one after the current card is resolved. (While editing, your next message is treated as the edited card, not queued.)
 
 If Anki is not reachable when you approve a card, the bot tells you so and moves on to the next queued word.
 
@@ -81,7 +83,7 @@ models.py                CardData dataclass
 bot/
   handlers/card_flow.py  Aiogram router: message handling, FSM, callbacks
   keyboards.py           Inline keyboards (review buttons, deck picker)
-  states.py              FSM states: reviewing, choosing_deck
+  states.py              FSM states: reviewing, editing, choosing_deck
 services/
   gigachat.py            GigaChat client wrapper, prompt template
   anki.py                AnkiConnect HTTP client (deckNames, addNote)

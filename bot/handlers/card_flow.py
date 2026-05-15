@@ -49,6 +49,26 @@ async def _process_next_in_queue(
         next_word = queue.pop()
 
 
+@router.message(CardFlow.editing)
+async def handle_edit_message(message: Message, state: FSMContext):
+    text = message.text or ""
+    front, _, back = text.partition("\n")
+    front = front.strip()
+    back = back.strip()
+    if not front:
+        await message.answer("Front cannot be empty. Send the card again.")
+        return
+
+    card = CardData(front=front, back=back)
+    await state.update_data(card=card)
+    await state.set_state(CardFlow.reviewing)
+    await message.answer(
+        f"*{card.front}*\n\n{card.back}",
+        parse_mode="Markdown",
+        reply_markup=card_review_keyboard(),
+    )
+
+
 @router.message(CardFlow.reviewing)
 @router.message(CardFlow.choosing_deck)
 async def queue_during_flow(message: Message, queue: WordQueue):
@@ -66,6 +86,18 @@ async def handle_word(
     await _start_card_flow(message, state, gigachat, message.text.strip())
     if await state.get_state() != CardFlow.reviewing:
         await _process_next_in_queue(message, state, gigachat, queue)
+
+
+@router.callback_query(CardFlow.reviewing, F.data == "edit")
+async def handle_edit(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    card: CardData = data["card"]
+    await state.set_state(CardFlow.editing)
+    await callback.message.answer(
+        "Send the edited card. First line is the front, the rest is the back.\n\n"
+        f"{card.front}\n{card.back}"
+    )
+    await callback.answer()
 
 
 @router.callback_query(CardFlow.reviewing, F.data == "discard")

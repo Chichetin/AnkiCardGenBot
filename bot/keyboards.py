@@ -5,6 +5,7 @@ def card_review_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="Approve", callback_data="approve"),
+            InlineKeyboardButton(text="Edit", callback_data="edit"),
             InlineKeyboardButton(text="Discard", callback_data="discard"),
         ]
     ])
